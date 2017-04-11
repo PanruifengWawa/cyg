@@ -2,6 +2,7 @@ package com.cyg.utils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class DateUtil {
@@ -27,6 +28,20 @@ public class DateUtil {
         }  
         return dateStr;
 		
+	}
+	
+	public static Integer getYear(Date date) {
+		Integer year = 0;
+		try {
+			Calendar c = Calendar.getInstance();
+		    c.setTime(date);
+		    year = c.get(Calendar.YEAR);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+
+	    return year;
 	}
 
 }

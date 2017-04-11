@@ -33,6 +33,16 @@
                 <value>com.cyg.models.Material</value>
                 <value>com.cyg.models.Event</value>
                 <value>com.cyg.models.EventApply</value>
+                <value>com.cyg.models.PhotoWall</value>
+                <value>com.cyg.models.Mooc</value>
+                <value>com.cyg.models.ProjectMember</value>
+                <value>com.cyg.models.ProjectPeopleDemand</value>
+                <value>com.cyg.models.ProjectJHS</value>
+                <value>com.cyg.models.Project</value>
+                <value>com.cyg.models.ProjectButt</value>
+                <value>com.cyg.models.ProjectSchedule</value>
+                <value>com.cyg.models.ProjectYS</value>
+                <value>com.cyg.models.ProjectJieTi</value>
                 
             </list>
         </property>
