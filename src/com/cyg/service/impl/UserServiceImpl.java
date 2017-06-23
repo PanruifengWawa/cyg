@@ -144,24 +144,116 @@ public class UserServiceImpl implements UserService {
 		return dataWrapper;
 	}
 
-//	@Override
-//	public DataWrapper<User> updateUser(User user,String token) {
-//		// TODO Auto-generated method stub
-//		DataWrapper<Void> dataWrapper = new DataWrapper<Void>();
-//		User userInMemory = SessionManager.getSession(token);
-//		if (userInMemory != null && userInMemory.getId() > 0) {
-//			User userInDB = userDao.getById(userInMemory.getId());
-//			if (userInDB != null) {
-//				if (user.get) {
-//					
-//				}
-//			} else {
-//				dataWrapper.setErrorCode(ErrorCodeEnum.Error);
-//			}
-//		} else {
-//			dataWrapper.setErrorCode(ErrorCodeEnum.Error);
-//		}
-//		return dataWrapper;
-//	}
+	@Override
+	public DataWrapper<Void> updateUser(User user, String token) {
+		// TODO Auto-generated method stub
+		DataWrapper<Void> dataWrapper = new DataWrapper<Void>();
+		User userInMemory = SessionManager.getSession(token);
+		if (userInMemory != null && userInMemory.getId() > 0) {
+			User userInDB = userDao.getById(userInMemory.getId());
+			if (userInDB != null) {
+				if (user.getPhone() != null && !user.getPhone().equals("")) {
+					userInDB.setPhone(user.getPhone());
+				}
+				
+				if (user.getEmail() != null && !user.getEmail().equals("")) {
+					userInDB.setEmail(user.getEmail());
+				}
+				
+				if (user.getIntention() != null && !user.getIntention().equals("")) {
+					userInDB.setIntention(user.getIntention());
+				}
+				if (user.getCompanyName() != null && !user.getCompanyName().equals("")) {
+					userInDB.setCompanyName(user.getCompanyName());
+				}
+				
+				if (user.getCompanyType() != null && !user.getCompanyType().equals("")) {
+					userInDB.setCompanyType(user.getCompanyType());
+				}
+				if (user.getContactName() != null && !user.getContactName().equals("")) {
+					userInDB.setContactName(user.getContactName());
+				}
+				if (user.getName() != null && !user.getName().equals("")) {
+					userInDB.setName(user.getName());
+				}
+				if (user.getIdNumber() != null && !user.getIdNumber().equals("")) {
+					userInDB.setIdNumber(user.getIdNumber());
+				}
+				if (user.getMajor() != null && !user.getMajor().equals("")) {
+					userInDB.setMajor(user.getMajor());
+				}
+				if (user.getCollege() != null && !user.getCollege().equals("")) {
+					userInDB.setCollege(user.getCollege());
+				}
+				if (user.getTeacherTitle() != null && !user.getTeacherTitle().equals("")) {
+					userInDB.setTeacherTitle(user.getTeacherTitle());
+				}
+				if (user.getWorkUnit() != null && !user.getWorkUnit().equals("")) {
+					userInDB.setWorkUnit(user.getWorkUnit());
+				}
+				if (user.getOfficeSector() != null && !user.getOfficeSector().equals("")) {
+					userInDB.setOfficeSector(user.getOfficeSector());
+				}
+				
+				if (!userDao.updateUser(userInDB)) {
+					dataWrapper.setErrorCode(ErrorCodeEnum.Error);
+				}
+			} else {
+				dataWrapper.setErrorCode(ErrorCodeEnum.Error);
+			}
+		} else {
+			dataWrapper.setErrorCode(ErrorCodeEnum.Error);
+		}
+		return dataWrapper;
+	}
+
+	@Override
+	public DataWrapper<Void> deleteUser(Long userId, String token) {
+		// TODO Auto-generated method stub
+		DataWrapper<Void> dataWrapper = new DataWrapper<Void>();
+		User user = SessionManager.getSession(token);
+		if (user != null && user.getId() < 0) {
+			if (!userDao.deleteUser(userId)) {
+				dataWrapper.setErrorCode(ErrorCodeEnum.Error);
+			}
+		} else {
+			dataWrapper.setErrorCode(ErrorCodeEnum.Error);
+		}
+		return dataWrapper;
+	}
+
+	@Override
+	public DataWrapper<User> schoolLogin(User user) {
+		// TODO Auto-generated method stub
+		DataWrapper<User> dataWrapper = new DataWrapper<User>();
+		if (user.getLoginName() != null && user.getIdentity() != null) {
+			User userInDB = userDao.getByUserName(user.getLoginName());
+		
+			if (userInDB == null) {
+				userInDB = new User();
+				userInDB.setId(null);
+				userInDB.setLoginName(user.getLoginName());
+				userInDB.setIdentity(user.getIdentity());
+				userDao.addUser(userInDB);
+				
+			}
+			
+			if (userInDB != null && userInDB.getId() != null) {
+				SessionManager.removeSessionByUserId(userInDB.getId());
+				String token = SessionManager.newSession(userInDB);
+				dataWrapper.setToken(token);
+				userInDB.setPassword(null);
+				dataWrapper.setData(userInDB);
+			} else {
+				dataWrapper.setErrorCode(ErrorCodeEnum.Error);
+			}
+			
+			
+		} else {
+			dataWrapper.setErrorCode(ErrorCodeEnum.Error);
+		}
+		return dataWrapper;
+	}
+
 
 }

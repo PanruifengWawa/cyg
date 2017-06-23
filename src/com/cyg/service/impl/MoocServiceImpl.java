@@ -69,6 +69,9 @@ public class MoocServiceImpl implements MoocService {
 		if (admin != null && admin.getId() < 0 && moocId != null) {
 			Mooc mooc = moocDao.getById(moocId);
 			if (mooc != null) {
+				
+				String key = mooc.getSrc().split("/")[mooc.getSrc().split("/").length-1];
+				QiNiuUtil.deleteFile(key);
 				if (!moocDao.deleteMooc(mooc)) {
 					dataWrapper.setErrorCode(ErrorCodeEnum.Error);
 				}

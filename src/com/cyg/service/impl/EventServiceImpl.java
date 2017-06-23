@@ -34,7 +34,7 @@ public class EventServiceImpl implements EventService {
 	public DataWrapper<List<Event>> getEventList(String useTimeId,String rentalPlace,String startDate,String endDate,Integer status,String token,Integer numPerPage,Integer pageNum) {
 		// TODO Auto-generated method stub
 		User user = SessionManager.getSession(token);
-		if (user != null && user.getId() < 0) {
+		if (user != null && user.getId() < 0) { //管理员
 			DataWrapper<List<Event>> dataWrapper = eventDao.getEventList(useTimeId,rentalPlace,DateUtil.parse(startDate), status,numPerPage, pageNum);
 			for(Event e: dataWrapper.getData()) {
 				if (e.getId() == null) {
@@ -45,10 +45,17 @@ public class EventServiceImpl implements EventService {
 				
 			}
 			return dataWrapper;
-		} else if (user != null) {
-			return eventDao.getEventList(DateUtil.parse(startDate), DateUtil.parse(endDate),status,user.getId());
-		} else {
-			return eventDao.getEventList(DateUtil.parse(startDate), DateUtil.parse(endDate),2,null);
+		} else if (user != null) { //普通用户
+			return eventDao.getEventListByUser(DateUtil.parse(startDate), DateUtil.parse(endDate),status,user.getId(),numPerPage, pageNum);
+		} else { // 未登录
+			if (token == null) { //未登录没有token，说明是游客
+				return eventDao.getEventList(DateUtil.parse(startDate), DateUtil.parse(endDate),2,null);
+			} else { //未登录有token,说明是token过期
+				DataWrapper<List<Event>> dataWrapper = new DataWrapper<List<Event>>();
+				dataWrapper.setErrorCode(ErrorCodeEnum.Error);
+				return dataWrapper;
+			}
+			
 		}
 
 		
@@ -94,7 +101,7 @@ public class EventServiceImpl implements EventService {
 		User user = SessionManager.getSession(token);
 		if (user != null) {
 			Event event = eventDao.getById(eventId);
-			if (event != null && event.getUserId().equals(user.getId())) {
+			if (event != null && (event.getUserId().equals(user.getId()) || user.getId() < 0)) {
 				if (!eventDao.deleteEvent(event)) {
 					dataWrapper.setErrorCode(ErrorCodeEnum.Error);
 				}

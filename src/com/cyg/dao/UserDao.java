@@ -12,4 +12,7 @@ public interface UserDao {
 			String name, Integer numPerPage, Integer pageNum);
 	
 	User getById(Long id);
+	
+	boolean updateUser(User user);
+	boolean deleteUser(Long id);
 }

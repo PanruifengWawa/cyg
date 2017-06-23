@@ -21,16 +21,105 @@ public class UserController {
 	@Autowired
 	UserService userService;
 	
-//	@RequestMapping(value="/update", method = RequestMethod.POST)
-//	@ResponseBody
-//	public DataWrapper<User> updateUser(
-//			@ModelAttribute User user,
-//			@RequestParam(value = "token", required = true) String token
-//			) {
-//		return userService
-//
-//	}
 	
+	/**
+	* @api {post} api/user/school/login 校内登录 
+	* @apiName user_school_login
+	* @apiGroup user
+	*
+	* @apiParam {Integer} identity * 用户身份:3老师 4学生 (必须,注意：这里的3、4被认为是校内登录时注册行为，不需要密码)
+	* @apiParam {String} loginName * 用户名（必须，长度4-31）
+	*
+	* @apiSuccessExample {json} Success-Response:
+	* 	HTTP/1.1 200 ok
+	* 	{
+	*  		"callStatus": "SUCCEED",
+	*  		"errorCode": "No_Error",
+	*  		"data": null,
+	*  		"token": null,
+	*  		"numberPerPage": 0,
+	*  		"currentPage": 0,
+	*  		"totalNumber": 0,
+	*  		"totalPage": 0
+	*	}
+	*
+	* @apiSuccessExample {json} Error-Response:
+	* 	HTTP/1.1 200 ok
+	* 	{
+	*  		"callStatus": "FAILED",
+	*  		"errorCode": "Error",
+	*  		"data": null,
+	*  		"token": null,
+	*  		"numberPerPage": 0,
+	*  		"currentPage": 0,
+	*  		"totalNumber": 0,
+	*  		"totalPage": 0
+	*	}
+	**/
+	@RequestMapping(value="/school/login", method = RequestMethod.POST)
+	@ResponseBody
+	public DataWrapper<User> updateUser(
+			@ModelAttribute User user
+			) {
+		return userService.schoolLogin(user);
+
+	}
+	
+	/**
+	* @api {post} api/user/update 修改用户信息
+	* @apiName user_update
+	* @apiGroup user
+	*
+	* @apiParam {String} phone * 电话（非必须）
+	* @apiParam {String} email * 邮箱（非必须）
+	* @apiParam {String} intention * 意向（非必须，格式如： 了解现状、收集创意、入驻创业谷、其他合作）
+	* @apiParam {String} companyName * 企业名称(企业)（非必须）
+	* @apiParam {String} companyType * 企业类型（非必须）
+	* @apiParam {String} contactName * 联系人姓名(企业)（非必须）
+	* @apiParam {String} name * 姓名(个人)（非必须）
+	* @apiParam {String} idNumber * 身份证号(个人)（非必须）
+	* @apiParam {String} college * 大学（非必须）
+	* @apiParam {String} major * 专业（非必须）
+	* @apiParam {String} teacherTitle * 教师职称（非必须）
+	* @apiParam {String} workUnit * 工作单位（非必须）
+	* @apiParam {String} officeSector * 工作部门（非必须）
+	* @apiParam {String} token * 身份凭证（必须）
+	*
+	* @apiSuccessExample {json} Success-Response:
+	* 	HTTP/1.1 200 ok
+	* 	{
+	*  		"callStatus": "SUCCEED",
+	*  		"errorCode": "No_Error",
+	*  		"data": null,
+	*  		"token": null,
+	*  		"numberPerPage": 0,
+	*  		"currentPage": 0,
+	*  		"totalNumber": 0,
+	*  		"totalPage": 0
+	*	}
+	*
+	* @apiSuccessExample {json} Error-Response:
+	* 	HTTP/1.1 200 ok
+	* 	{
+	*  		"callStatus": "FAILED",
+	*  		"errorCode": "Error",
+	*  		"data": null,
+	*  		"token": null,
+	*  		"numberPerPage": 0,
+	*  		"currentPage": 0,
+	*  		"totalNumber": 0,
+	*  		"totalPage": 0
+	*	}
+	**/
+	@RequestMapping(value="/update", method = RequestMethod.POST)
+	@ResponseBody
+	public DataWrapper<Void> update(
+			@ModelAttribute User user,
+			@RequestParam(value = "token", required = true) String token
+			) {
+		return userService.updateUser(user, token);
+
+	}
 	
 	/**
 	* @api {get} api/user/getById 管理员获取用户详情
@@ -291,6 +380,49 @@ public class UserController {
 			@ModelAttribute User user
 			) {
 		return userService.register(user);
+	}
+	
+	/**
+	* @api {post} api/user/deleteUser 删除
+	* @apiName user_deleteUser
+	* @apiGroup user
+	*
+	* @apiParam {Integer} userId * 
+	* @apiParam {String} token * 
+	*
+	* @apiSuccessExample {json} Success-Response:
+	* 	HTTP/1.1 200 ok
+	* 	{
+	*  		"callStatus": "SUCCEED",
+	*  		"errorCode": "No_Error",
+	*  		"data": null,
+	*  		"token": null,
+	*  		"numberPerPage": 0,
+	*  		"currentPage": 0,
+	*  		"totalNumber": 0,
+	*  		"totalPage": 0
+	*	}
+	*
+	* @apiSuccessExample {json} Error-Response:
+	* 	HTTP/1.1 200 ok
+	* 	{
+	*  		"callStatus": "FAILED",
+	*  		"errorCode": "Error",
+	*  		"data": null,
+	*  		"token": null,
+	*  		"numberPerPage": 0,
+	*  		"currentPage": 0,
+	*  		"totalNumber": 0,
+	*  		"totalPage": 0
+	*	}
+	**/
+	@RequestMapping(value="/deleteUser", method = RequestMethod.POST)
+	@ResponseBody
+	public DataWrapper<Void> deleteUser(
+			@RequestParam(value = "userId", required = true) Long userId,
+			@RequestParam(value = "token", required = true) String token
+			) {
+		return userService.deleteUser(userId, token);
 	}
 	
 	

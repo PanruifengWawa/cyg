@@ -3,11 +3,8 @@ package com.cyg.service.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.cyg.dao.PhotoWallDao;
 import com.cyg.enums.ErrorCodeEnum;
@@ -16,7 +13,7 @@ import com.cyg.models.User;
 import com.cyg.service.PhotoWallService;
 import com.cyg.utils.DataWrapper;
 import com.cyg.utils.DateUtil;
-import com.cyg.utils.FileUtils;
+import com.cyg.utils.QiNiuUtil;
 import com.cyg.utils.SessionManager;
 
 @Service("photoWallService")
@@ -31,29 +28,31 @@ public class PhotoWallServiceImpl implements PhotoWallService {
 	}
 
 	@Override
-	public DataWrapper<Void> add(String content, MultipartFile file, String token,HttpServletRequest request) {
+	public DataWrapper<Void> add(String content, String src,Integer width,Integer height, String token) {
 		// TODO Auto-generated method stub
 		DataWrapper<Void> dataWrapper = new DataWrapper<Void>();
 		User admin = SessionManager.getSession(token);
-		if (admin != null && content != null && file != null) {
-			String fileSrc = FileUtils.saveFile(file, "photoWall", request);
-			if (fileSrc != null) {
-				Date date = new Date();
-				PhotoWall photoWall = new PhotoWall();
-				photoWall.setId(null);
-				photoWall.setContent(content);
-				photoWall.setSrc(fileSrc);
-				photoWall.setDate(date);
-				photoWall.setYear(DateUtil.getYear(date));
-				if (!photoWallDao.addPhotoWall(photoWall)) {
-					dataWrapper.setErrorCode(ErrorCodeEnum.Error);
-				}
-				
-			} else {
-				dataWrapper.setErrorCode(ErrorCodeEnum.Error);
+		if (admin != null && content != null && src != null && width != null && height != null) {
+			
+			PhotoWall photoWall = new PhotoWall();
+			Date date = new Date();
+			photoWall.setId(null);
+			photoWall.setContent(content);
+			photoWall.setSrc(src);
+			photoWall.setDate(date);
+			photoWall.setYear(DateUtil.getYear(date));
+			
+			
+			String smallSrc = src + "?imageView2/1/w/" + (int)(width/(height/250)) + "/h/" + 250;
+			photoWall.setSmallSrc(smallSrc);
+			
+			if (!photoWallDao.addPhotoWall(photoWall)) {
+				dataWrapper.setErrorCode(ErrorCodeEnum.Entity_not_Saved);
 			}
+			
+			
 		} else {
-			dataWrapper.setErrorCode(ErrorCodeEnum.Error);
+			dataWrapper.setErrorCode(ErrorCodeEnum.Auth_Error);
 		}
 		return dataWrapper;
 	}
@@ -66,6 +65,9 @@ public class PhotoWallServiceImpl implements PhotoWallService {
 		if (admin != null && photoWallId != null) {
 			PhotoWall photoWall = photoWallDao.getById(photoWallId);
 			if (photoWall != null) {
+				String key = photoWall.getSrc().split("/")[photoWall.getSrc().split("/").length-1];
+				QiNiuUtil.deleteFile(key);
+				
 				if (!photoWallDao.deletePhotoWall(photoWall)) {
 					dataWrapper.setErrorCode(ErrorCodeEnum.Error);
 				}

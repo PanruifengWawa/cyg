@@ -6,7 +6,7 @@ import com.cyg.models.News;
 import com.cyg.utils.DataWrapper;
 
 public interface NoticeService {
-	DataWrapper<List<News>> getNoticeList(Integer numPerPage,Integer pageNum);
+	DataWrapper<List<News>> getNoticeList(Integer ifImage, Integer numPerPage,Integer pageNum);
 
 	DataWrapper<Void> addNotice(News news,String token);
 	

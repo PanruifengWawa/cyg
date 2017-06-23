@@ -18,9 +18,19 @@ public class PhotoWall {
 	private Long id;
 	private String content;
 	private String src;
+	private String smallSrc;
 	private Date date;
 	private Integer year;
 	
+	
+	@Basic
+    @Column(name = "small_src")
+	public String getSmallSrc() {
+		return smallSrc;
+	}
+	public void setSmallSrc(String smallSrc) {
+		this.smallSrc = smallSrc;
+	}
 	@Basic
     @Column(name = "src")
 	public String getSrc() {

@@ -14,5 +14,9 @@ public interface UserService {
 	DataWrapper<List<User>> getUserList(Integer identity,String phone,String email,String companyName,String name,Integer numPerPage,Integer pageNum,String token);
 
 	DataWrapper<User> getById(Long userId,String token);
-//	DataWrapper<User> updateUser(User user,String token); 
+	DataWrapper<Void> updateUser(User user,String token); 
+	
+	DataWrapper<Void> deleteUser(Long userId,String token); 
+	
+	DataWrapper<User> schoolLogin(User user);
 }

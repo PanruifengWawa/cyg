@@ -42,6 +42,7 @@ public class PhotoWallController {
     *  				"id": 3,
     *  				"content": "我是内容啦2",
     *  				"src": "photoWall/df212a8e1091b0e1f40145e28be95e70.jpg",
+    *  				"smallSrc": "photoWall/small_18a446cbf0241512e321f5fa0ac749aa.jpeg",
     *  				"date": "2017-03-30",
     *  				"year": 2017
     *			}
@@ -83,7 +84,9 @@ public class PhotoWallController {
 	* @apiGroup photoWall
 	*
 	* @apiParam {String} content * 图片墙图片内容（必须）
-	* @apiParam {file} file * 图片（必须）
+	* @apiParam {String} src * 七牛存储的url（必须,详细见慕课上传的方式）
+	* @apiParam {int} width * 图片宽度（必须）
+	* @apiParam {int} height * 图片高度（必须）
 	* @apiParam {String} token * 身份凭证（必须，管理员验证）
 	*
 	* @apiSuccessExample {json} Success-Response:
@@ -116,11 +119,12 @@ public class PhotoWallController {
 	@ResponseBody
 	public DataWrapper<Void> add(
 			@RequestParam(value = "content",required = true) String content,
-			@RequestParam(value = "file",required = true) MultipartFile file,
-			@RequestParam(value = "token",required = true) String token,
-			HttpServletRequest request
+			@RequestParam(value = "src",required = true) String src,
+			@RequestParam(value = "width",required = true) Integer width,
+			@RequestParam(value = "height",required = true) Integer height,
+			@RequestParam(value = "token",required = true) String token
 			){
-		return photoWallService.add(content, file,token,request);
+		return photoWallService.add(content, src, width, height, token);
 	}
 	
 	/**

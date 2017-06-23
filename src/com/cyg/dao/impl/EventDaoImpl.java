@@ -143,4 +143,66 @@ public class EventDaoImpl extends BaseDao<Event> implements EventDao {
 		return update(event);
 	}
 
+	@Override
+	public DataWrapper<List<Event>> getEventListByUser(Date startDate, Date endDate, Integer status, Long userId,
+			Integer numPerPage, Integer pageNum) {
+		// TODO Auto-generated method stub
+		DataWrapper<List<Event>> dataWrapper = new DataWrapper<List<Event>>();
+		List<Event> ret = null;
+		Session session = getSession();
+		Criteria criteria = session.createCriteria(Event.class);
+		
+		if (numPerPage == null) {
+			numPerPage = -1;
+		}
+        if (pageNum == null) {
+			pageNum = -1;
+		}
+        
+        if (startDate != null) {
+        	 criteria.add(Restrictions.ge("useDate", startDate));
+		}
+        
+        if (endDate != null) {
+        	 criteria.add(Restrictions.le("useDate", endDate));
+		}
+        if (status != null) {
+        	criteria.add(Restrictions.eq("status", status));
+		}
+        if (userId != null) {
+        	criteria.add(Restrictions.eq("userId", userId));
+		}
+        
+        criteria.addOrder(Order.asc("useDate"));
+        criteria.addOrder(Order.asc("useTimeId"));
+
+        
+        criteria.setProjection(Projections.rowCount());
+        int totalltemNum = ((Long) criteria.uniqueResult()).intValue();
+        int totalPageNum = DaoUtils.getTotalPageNum(totalltemNum, numPerPage);
+
+        criteria.addOrder(Order.desc("useDate"));
+        criteria.addOrder(Order.asc("useTimeId"));
+
+        criteria.setProjection(null);
+        if (numPerPage > 0 && pageNum > 0) {
+            criteria.setMaxResults(numPerPage);
+            criteria.setFirstResult((pageNum - 1) * numPerPage);
+        }
+        
+		try {
+			ret = criteria.list();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		dataWrapper.setCurrentPage(pageNum);
+		dataWrapper.setNumberPerPage(numPerPage);
+		dataWrapper.setTotalPage(totalPageNum);
+		dataWrapper.setTotalNumber(totalltemNum);
+        dataWrapper.setData(ret);
+        return dataWrapper;
+	}
+
 }

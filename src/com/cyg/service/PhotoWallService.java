@@ -11,7 +11,7 @@ import com.cyg.utils.DataWrapper;
 
 public interface PhotoWallService {
 	DataWrapper<List<PhotoWall>> getPhotoList(Integer year,Integer numPerPage,Integer pageNum);
-	DataWrapper<Void> add(String content,MultipartFile file,String token,HttpServletRequest request);
+	DataWrapper<Void> add(String content,String src, Integer width,Integer height,String token);
 	
 	DataWrapper<Void> delete(Long photoWallId,String token);
 }

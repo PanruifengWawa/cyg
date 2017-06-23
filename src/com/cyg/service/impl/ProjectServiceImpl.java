@@ -19,6 +19,7 @@ import com.cyg.dao.ProjectPeopleDemandDao;
 import com.cyg.dao.ProjectScheduleDao;
 import com.cyg.dao.ProjectYSDao;
 import com.cyg.enums.ErrorCodeEnum;
+import com.cyg.models.ButtedProject;
 import com.cyg.models.Project;
 import com.cyg.models.ProjectAll;
 import com.cyg.models.ProjectButt;
@@ -69,13 +70,14 @@ public class ProjectServiceImpl implements ProjectService {
 		if (user != null) {
 			Project project = projectDao.getById(projectId);
 			ProjectYS projectYS = projectYSDao.getByProjectId(projectId);
-			if (project.getUserId().equals(user.getId()) && projectYS.getUserId().equals(user.getId())) {
+			if (project != null && (project.getUserId().equals(user.getId()) ||  user.getId() < 0)) {
 				projectDao.deleteProject(project);
-				projectYSDao.deleteProjectYS(projectYS);
-			} else {
-				dataWrapper.setErrorCode(ErrorCodeEnum.Error);
 			}
-			
+			if (projectYS != null && ( projectYS.getUserId().equals(user.getId()) || user.getId() < 0 )  ) {
+				projectYSDao.deleteProjectYS(projectYS);
+			}
+
+
 		} else {
 			dataWrapper.setErrorCode(ErrorCodeEnum.Error);
 		}
@@ -235,9 +237,9 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public DataWrapper<Void> updateProject(Long projectIdToUpdate, Project project, String token) {
+	public DataWrapper<Project> updateProject(Long projectIdToUpdate, Project project, String token) {
 		// TODO Auto-generated method stub
-		DataWrapper<Void> dataWrapper = new  DataWrapper<Void>();
+		DataWrapper<Project> dataWrapper = new  DataWrapper<Project>();
 		User user = SessionManager.getSession(token);
 		if (user != null) {
 			Project projectINDB = projectDao.getById(projectIdToUpdate);
@@ -405,6 +407,8 @@ public class ProjectServiceImpl implements ProjectService {
 				}
 				if (!projectDao.updateProject(projectINDB)) {
 					dataWrapper.setErrorCode(ErrorCodeEnum.Error);
+				} else {
+					dataWrapper.setData(projectINDB);
 				}
 			}
 			
@@ -557,6 +561,47 @@ public class ProjectServiceImpl implements ProjectService {
 			Integer pageNum) {
 		// TODO Auto-generated method stub
 		return projectDao.getProjectList(demand, type, source, status,numPerPage, pageNum);
+	}
+
+	@Override
+	public DataWrapper<List<ButtedProject>> getButtProjectList(Integer numPerPage, Integer pageNum, String token) {
+		// TODO Auto-generated method stub
+		DataWrapper<List<ButtedProject>> dataWrapper = new DataWrapper<List<ButtedProject>>();
+		User user = SessionManager.getSession(token);
+		if (user != null) {
+			if (user.getId() < 0) {
+				dataWrapper = projectDao.getButtProjectList(numPerPage, pageNum, null);
+			} else {
+				dataWrapper = projectDao.getButtProjectList(numPerPage, pageNum, user.getId());
+			}
+			
+		} else {
+			dataWrapper.setErrorCode(ErrorCodeEnum.Error);
+		}
+		return dataWrapper;
+	}
+
+	@Override
+	public DataWrapper<Void> verifyButtProject(Long buttId, Integer status,String token) {
+		// TODO Auto-generated method stub
+		DataWrapper<Void> dataWrapper = new  DataWrapper<Void>();
+		User user = SessionManager.getSession(token);
+		
+		if (user != null && buttId != null) {
+			ProjectButt projectButt = projectButtDao.getById(buttId);
+			if (projectButt != null) {
+				projectButt.setStatus(status);
+				if (!projectButtDao.updatePorjectButt(projectButt)) {
+					dataWrapper.setErrorCode(ErrorCodeEnum.Error);
+				}
+			} else {
+				dataWrapper.setErrorCode(ErrorCodeEnum.Error);
+			}
+			
+		} else {
+			dataWrapper.setErrorCode(ErrorCodeEnum.Error);
+		}
+		return dataWrapper;
 	}
 
 	

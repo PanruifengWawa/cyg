@@ -42,7 +42,7 @@ public class EventController {
 	* @apiParam {String} eventEquipment * 活动所需器材（必须,格式如：会议桌、多媒体投影仪）
 	* @apiParam {String} otherEquipment * 活动所需要的其他器材（非必须）
 	* @apiParam {file} file * 活动海报（必须，最终海报存的路径为photo字段，可在返回列表接口看到）
-	* @apiParam {String} token * 身份凭证（必须，管理员验证）
+	* @apiParam {String} token * 身份凭证（必须，用户验证）
 	*
 	* @apiSuccessExample {json} Success-Response:
 	* 	HTTP/1.1 200 ok
@@ -136,7 +136,7 @@ public class EventController {
 	* @apiGroup event
 	*
 	* @apiParam {Long} eventId * 活动id（必须）
-	* @apiParam {String} token * 身份凭证（必须，只有活动的创建者才能删除）
+	* @apiParam {String} token * 身份凭证（必须，只有活动的创建者和管理员才能删除）
 	*
 	* @apiSuccessExample {json} Success-Response:
 	* 	HTTP/1.1 200 ok

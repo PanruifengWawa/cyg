@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cyg.models.ButtedProject;
 import com.cyg.models.Project;
 import com.cyg.models.ProjectAll;
 import com.cyg.models.ProjectButt;
@@ -199,11 +200,111 @@ public class ProjectController {
 	
 	
 	/**
+	* @api {get} api/project/getButtProjectList 获取对接列表
+	* @apiName project_getButtProjectList
+	* @apiGroup project
+	*
+	* @apiParam {int} numPerPage * （非必须）
+	* @apiParam {int} pageNum * （非必须）
+	* @apiParam {String} token * 身份验证（非必须，用户只能看到自己申请的对接，管理员能看到所有的对接）
+	*
+	* @apiSuccessExample {json} Success-Response:
+	* 	HTTP/1.1 200 ok
+	* 	{
+	*  		"callStatus": "SUCCEED",
+	*  		"errorCode": "No_Error",
+	*  		"data":  [
+    *			{
+    *  				"id": 76,
+    *  				"projectId": 565,
+    *  				"projectName": "第二个测试项目",
+    *  				"demandType": 1,
+    *  				"buttTime": 1491925925,
+    *  				"status": 2
+    *			}
+  	*		]
+	*  		"token": null,
+	*  		"numberPerPage": 10,
+	*  		"currentPage": 1,
+	*  		"totalNumber": 1,
+	*  		"totalPage": 1
+	*	}
+	*
+	* @apiSuccessExample {json} Error-Response:
+	* 	HTTP/1.1 200 ok
+	* 	{
+	*  		"callStatus": "FAILED",
+	*  		"errorCode": "Error",
+	*  		"data": null,
+	*  		"token": null,
+	*  		"numberPerPage": 0,
+	*  		"currentPage": 0,
+	*  		"totalNumber": 0,
+	*  		"totalPage": 0
+	*	}
+	**/
+	@RequestMapping(value="getButtProjectList",method = RequestMethod.GET)
+	@ResponseBody
+	public DataWrapper<List<ButtedProject>> getButtProjectList(
+			@RequestParam(value = "numPerPage",required = false) Integer numPerPage,
+            @RequestParam(value = "pageNum",required = false) Integer pageNum,
+            @RequestParam(value = "token",required = true) String token
+			) {
+		return projectService.getButtProjectList(numPerPage, pageNum, token);
+	}
+	
+	/**
+	* @api {post} api/project/verifyButtProject 审核对接请求
+	* @apiName project_verifyButtProject
+	* @apiGroup project
+	*
+	* @apiParam {String} buttId * 对接id（必须,是getButtProjectList接口中的id）
+	* @apiParam {String} status * 状态（状态0:审核失败 1:审核中 2:审核成功）
+	* @apiParam {String} token * 身份凭证
+	*
+	* @apiSuccessExample {json} Success-Response:
+	* 	HTTP/1.1 200 ok
+	* 	{
+	*  		"callStatus": "SUCCEED",
+	*  		"errorCode": "No_Error",
+	*  		"data": null,
+	*  		"token": null,
+	*  		"numberPerPage": 0,
+	*  		"currentPage": 0,
+	*  		"totalNumber": 0,
+	*  		"totalPage": 0
+	*	}
+	*
+	* @apiSuccessExample {json} Error-Response:
+	* 	HTTP/1.1 200 ok
+	* 	{
+	*  		"callStatus": "FAILED",
+	*  		"errorCode": "Error",
+	*  		"data": null,
+	*  		"token": null,
+	*  		"numberPerPage": 0,
+	*  		"currentPage": 0,
+	*  		"totalNumber": 0,
+	*  		"totalPage": 0
+	*	}
+	**/
+	@RequestMapping(value="verifyButtProject",method = RequestMethod.POST)
+	@ResponseBody
+	public DataWrapper<Void> verifyButtProject(
+			@RequestParam(value = "buttId",required = true) Long buttId,
+			@RequestParam(value = "status",required = true) Integer status,
+            @RequestParam(value = "token",required = true) String token
+			) {
+		return projectService.verifyButtProject(buttId,status, token);
+	}
+	
+	
+	/**
 	* @api {get} api/project/getProjectList 获取项目列表
 	* @apiName project_getProjectList
 	* @apiGroup project
 	*
-	* @apiParam {int} status * 项目状态 在项目对接列表中，请将status设置为2 (非必须) 11-申请的项目审核中，2-申请的项目通过审核，21-申请结题的项目审核中，22-申请结题的项目通过审核，其他状态都是失败
+	* @apiParam {int} status * 项目状态 在项目对接列表中，请将status设置为2 (非必须) 11-申请的项目审核中，12-申请的项目通过审核,2-对接项目列表，21-申请结题的项目审核中，22-申请结题的项目通过审核，其他状态都是失败
 	* @apiParam {String} demand * 需求，talent-找人才；mentor-找导师；money-找资金（非必须）
 	* @apiParam {String} projectType * 项目类型，如“农林、畜牧、食品及相关产业”（非必须）
 	* @apiParam {int} source * 来源，1企业，2个人，3导师，4学生（非必须）
@@ -704,7 +805,7 @@ public class ProjectController {
 	* 	{
 	*  		"callStatus": "SUCCEED",
 	*  		"errorCode": "No_Error",
-	*  		"data": null,
+	*  		"data": ........返回project details的内容，details仅包括上面修改的部分,
 	*  		"token": null,
 	*  		"numberPerPage": 0,
 	*  		"currentPage": 0,
@@ -727,7 +828,7 @@ public class ProjectController {
 	**/
 	@RequestMapping(value="updateProject",method = RequestMethod.POST)
 	@ResponseBody
-	public DataWrapper<Void> updateProject(
+	public DataWrapper<Project> updateProject(
 			@RequestParam(value = "projectIdToUpdate",required = true) Long projectIdToUpdate,
 			@ModelAttribute Project project,
             @RequestParam(value = "token",required = true) String token
@@ -1010,12 +1111,12 @@ public class ProjectController {
 	
 	
 	/**
-	* @api {post} api/project/verify 管理员审核某个报名
+	* @api {post} api/project/verify 管理员审核项目
 	* @apiName project_verify
 	* @apiGroup project
 	*
 	* @apiParam {Long} projectId * 项目id （必须）
-	* @apiParam {Integer} status * 状态（必须） 11-申请的项目审核中，2-申请的项目通过审核，21-申请结题的项目审核中，22-申请结题的项目通过审核，其他状态都是失败（这是因为他们的数据库设计得很乱，我们在这里设定 0 为失败状态，但是你在显示项目列表的时候，如果状态不是0，也不是已知的状态，就认为是失败）
+	* @apiParam {Integer} status * 状态（必须） 11-申请的项目审核中，12-申请的项目通过审核，2-项目对接列表,21-申请结题的项目审核中，22-申请结题的项目通过审核，其他状态都是失败（这是因为他们的数据库设计得很乱，我们在这里设定 0 为失败状态，但是你在显示项目列表的时候，如果状态不是0，也不是已知的状态，就认为是失败）
 	* @apiParam {String} token * 身份凭证（必须，管理员验证）
 	*
 	* @apiSuccessExample {json} Success-Response:

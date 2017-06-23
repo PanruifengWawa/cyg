@@ -12,7 +12,7 @@ public interface NewsDao {
 	News getById(Long id);
 	int getCount(Integer ifImage);
 	
-	DataWrapper<List<News>> getNoticeList(Integer numPerPage, Integer pageNum);
+	DataWrapper<List<News>> getNoticeList(Integer ifImage, Integer numPerPage, Integer pageNum);
 	News getNoticeById(Long id);
 
 }

@@ -41,4 +41,16 @@ public class ProjectButtDaoImpl extends BaseDao<ProjectButt> implements ProjectB
         return ret;
 	}
 
+	@Override
+	public ProjectButt getById(Long id) {
+		// TODO Auto-generated method stub
+		return get(id);
+	}
+
+	@Override
+	public boolean updatePorjectButt(ProjectButt projectButt) {
+		// TODO Auto-generated method stub
+		return update(projectButt);
+	}
+
 }

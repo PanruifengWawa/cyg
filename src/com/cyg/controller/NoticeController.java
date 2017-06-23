@@ -25,6 +25,7 @@ public class NoticeController {
 	* @apiName notice_getNoticeList
 	* @apiGroup notice
 	*
+	* @apiParam {int} ifImage * （非必须,1-必须有图片）
 	* @apiParam {int} numPerPage * （非必须）
 	* @apiParam {int} pageNum * （非必须）
 	*
@@ -68,10 +69,11 @@ public class NoticeController {
 	@RequestMapping(value="getNoticeList",method = RequestMethod.GET)
 	@ResponseBody
 	public DataWrapper<List<News>> getNoticeList(
+			@RequestParam(value = "ifImage",required = false) Integer ifImage,
 			@RequestParam(value = "numPerPage",required = false) Integer numPerPage,
             @RequestParam(value = "pageNum",required = false) Integer pageNum
 			){
-		return noticeService.getNoticeList(numPerPage, pageNum);
+		return noticeService.getNoticeList(ifImage,numPerPage, pageNum);
 	}
 	
 	

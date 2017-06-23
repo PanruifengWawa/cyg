@@ -30,9 +30,9 @@ public class NoticeServiceImpl implements NoticeService{
 	NewsTitleDao newsTitleDao;
 
 	@Override
-	public DataWrapper<List<News>> getNoticeList(Integer numPerPage, Integer pageNum) {
+	public DataWrapper<List<News>> getNoticeList(Integer ifImage, Integer numPerPage, Integer pageNum) {
 		// TODO Auto-generated method stub
-		return newsDao.getNoticeList(numPerPage, pageNum);
+		return newsDao.getNoticeList(ifImage,numPerPage, pageNum);
 	}
 
 	@Override

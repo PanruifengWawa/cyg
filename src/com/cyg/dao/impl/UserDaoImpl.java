@@ -111,4 +111,16 @@ public class UserDaoImpl extends BaseDao<User> implements UserDao {
 		return get(id);
 	}
 
+	@Override
+	public boolean updateUser(User user) {
+		// TODO Auto-generated method stub
+		return update(user);
+	}
+
+	@Override
+	public boolean deleteUser(Long id) {
+		// TODO Auto-generated method stub
+		return delete(get(id));
+	}
+
 }

@@ -4,6 +4,7 @@ create table `photo_wall` (
 	`content` text DEFAULT NULL,
 	`upload_date` date not NULL,
 	`src` varchar(256) DEFAULT NULL,
+	`small_src` varchar(256) DEFAULT NULL,
 	`year`  mediumint(8),
 	 PRIMARY KEY (`id`)
 )ENGINE=MyISAM DEFAULT CHARSET=utf8;

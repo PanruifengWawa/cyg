@@ -146,13 +146,16 @@ public class NewsDaoImpl extends BaseDao<News> implements NewsDao {
 	}
 
 	@Override
-	public DataWrapper<List<News>> getNoticeList(Integer numPerPage, Integer pageNum) {
+	public DataWrapper<List<News>> getNoticeList(Integer ifImage, Integer numPerPage, Integer pageNum) {
 		// TODO Auto-generated method stub
-		int totalltemNum = getNoticeCount();
+		int totalltemNum = getNoticeCount(ifImage);
 		
 		String sql = "SELECT c.contentid as id, c.title as title, n.content as content, c.input_time as date,c.pic as pic,c.username as userName,n.readpoint as readPoint,c.update_time as updateDate " +
 						"from cms_content c,cms_c_news n where c.contentid = n.contentid and c.status =99 and c.catid =6599";
 
+		if(ifImage != null && ifImage == 1) {
+			sql += " and pic is not null and pic != ''"; 
+		}
 		
 		sql += " order by date desc";
 		DataWrapper<List<News>> dataWrapper = new DataWrapper<List<News>>();
@@ -197,9 +200,14 @@ public class NewsDaoImpl extends BaseDao<News> implements NewsDao {
         return dataWrapper;
 	}
 	
-	public int getNoticeCount() {
+	public int getNoticeCount(Integer ifImage) {
 		// TODO Auto-generated method stub
 		String sql = "SELECT count(*) from cms_content c,cms_c_news n where c.contentid = n.contentid and c.status =99 and c.catid =6599";
+		
+		if(ifImage != null && ifImage == 1) {
+			sql += " and pic is not null and pic != ''"; 
+		}
+		
 
 		List<java.math.BigInteger> ret = null;
         Session session = getSession();

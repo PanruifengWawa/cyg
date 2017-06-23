@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cyg.models.ButtedProject;
 import com.cyg.models.Project;
 import com.cyg.models.ProjectAll;
 import com.cyg.models.ProjectButt;
@@ -24,7 +25,7 @@ public interface ProjectService {
 	 
 	 DataWrapper<ProjectAll> getProjectDetails(Long projectId);
 
-	 DataWrapper<Void> updateProject(Long projectIdToUpdate,Project project,String token);
+	 DataWrapper<Project> updateProject(Long projectIdToUpdate,Project project,String token);
 
 	 DataWrapper<Void> updateYSProject(Long projectIdToUpdate,String projectName,String xiaoqu,ProjectYS projectYS,String token,HttpServletRequest request,MultipartFile jhs);
 	 
@@ -41,4 +42,9 @@ public interface ProjectService {
 	 DataWrapper<Void> verify(Long projectId,Integer status,String token);
 	 
 	 DataWrapper<List<Project>> getProjectList(String demand,String type,Integer source,Integer status,Integer numPerPage,Integer pageNum);
+	 
+	 
+	 DataWrapper<List<ButtedProject>> getButtProjectList(Integer numPerPage,Integer pageNum,String token);
+	 
+	 DataWrapper<Void> verifyButtProject(Long buttId, Integer status, String token);
 }
